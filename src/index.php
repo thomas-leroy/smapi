@@ -14,7 +14,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) u
     });
 
     $r->addRoute('GET', '/swagger', function() {
-        // header('Content-Type: application/yaml');
+        header('Content-Type: application/yaml');
         readfile('./swagger.yaml');
         exit();
     });
