@@ -9,3 +9,21 @@ paths:
       responses:
         '200':
           description: 'Success'
+  /images/{folderName}:
+    get:
+      summary: 'Get images from folderName folder'
+      parameters:
+        - in: path
+          name: folderName
+          schema:
+            type: string
+            minimum: 1
+      responses:
+        '200':
+          description: 'Success'
+  /swagger:
+    get:
+      summary: 'DEV ONLY - Get thie swagger file content' 
+      responses:
+        '200':
+          description: 'Success'
