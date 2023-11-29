@@ -1,5 +1,10 @@
 # Smapi
 
+<p align="center">
+  <img src="https://github.com/thomas-leroy/smapi/blob/main/logo.png?raw=true" width="500">
+</p>
+
+
 L'objectif de ce projet est de produire une API la plus simple possible pour optimiser et diffuser des images.
 
 Ce projet te donne tout ce dont tu as besoin pour faire tourner un environnement local PHP 8 avec Nginx grâce à Docker. Il inclut un `Dockerfile`, un fichier de configuration Nginx (`nginx.conf`) et un `Makefile` pour simplifier les commandes Docker.
