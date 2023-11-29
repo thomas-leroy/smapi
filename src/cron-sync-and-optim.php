@@ -53,7 +53,7 @@ function syncFolders($src, $dest) {
 
         copy($srcPath, $destPath);
 
-        if ($ext === 'jpg') {
+        if ($ext === 'jpg' || $ext === 'png') {
             resizeImage($destPath, 2048);
         }
 
