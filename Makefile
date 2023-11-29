@@ -1,5 +1,5 @@
-.PHONY: build
-build: # Construire les images Docker
+.PHONY: init
+init: # Construire les images Docker
 	docker-compose build
 
 .PHONY: up
@@ -16,4 +16,4 @@ down: # Arrêter les conteneurs
 
 .PHONY: clean
 clean: # Supprimer les conteneurs, volumes, et images
-	docker-compose down --rmi all --volumes 
+	docker-compose down --rmi all --volumes

@@ -13,7 +13,7 @@ Les commandes sont accessibles pour effectuer des actions communes du projet.
 
 Par exemple : `make up` pour lancer le projet.
 
-### build
+### init
 
 Cette commande construit une image Docker à partir du `Dockerfile`.
 
