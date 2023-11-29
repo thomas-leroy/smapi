@@ -1,0 +1,11 @@
+openapi: 3.0.0
+info:
+  title: SMAPI
+  version: 1.0.0
+paths:
+  /folders:
+    get:
+      summary: 'Get media folders list'
+      responses:
+        '200':
+          description: 'Success'
