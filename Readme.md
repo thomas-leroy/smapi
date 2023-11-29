@@ -5,40 +5,47 @@ Ce projet te donne tout ce dont tu as besoin pour faire tourner un environnement
 ## Prérequis
 
 - Avoir Docker installé sur ta machine (https://docs.docker.com/engine/install/)
-
-## Structure du Projet
-
-- `Dockerfile` : Contient les instructions pour créer l'image Docker avec PHP 8 et Nginx.
-- `nginx.conf` : Fichier de configuration pour le serveur Nginx.
-- `Makefile` : Fichier qui contient des commandes simplifiées pour construire et gérer le conteneur Docker.
-- `/src` : Le dossier qui sera monté comme racine du serveur web.
+- Cloner ce repo
 
 ## Commandes Makefile
+
+Les commandes sont accessibles pour effectuer des actions communes du projet.
+
+Par exemple : `make up` pour lancer le projet.
 
 ### build
 
 Cette commande construit une image Docker à partir du `Dockerfile`.
 
-
 ### up
 
 Cette commande exécute le conteneur Docker à partir de l'image que tu as créée.
-
 
 ### down
 
 Cette commande arrête et supprime le conteneur Docker en cours d'exécution.
 
+### shell
+
+Accéder à la ligne de commande (cli) du conteneur.
 
 ## Utilisation
 
 1. Ouvre un terminal dans le dossier où se trouvent ces fichiers.
 2. Lance `make build` pour construire l'image Docker (à la toute première utilisation).
-3. Exécute `make run` pour démarrer le conteneur.
+3. Exécute `make up` pour démarrer le conteneur.
 4. Accède à `http://localhost:1234` pour voir ton serveur en action.
-5. Utilise `make stop` pour arrêter le serveur lorsque tu as terminé.
+5. Utilise `make down` pour arrêter le serveur lorsque tu as terminé.
 
 
 ## Routes disponibles
 
 Les routes sont décrites dans la documentation openAPI `swagger.yaml`.
+
+## CRONJOB
+
+Pour synchronier et optimiser les images pour le web, configurer une cronjob (période à définir) sur la route :`http://localhost/cron-sync-and-optim.php`.
+
+Le script peut être long à lancer pour la première fois et va timeout régulièrement. A chaque lancement il avancera dans son traitement, jusqu'a avoir tout synchronisé.
+
+Les images sont à stocker dans le dossier ./src/images-sources, et seront copiées optimisées dans le répertoire ./src/images-optim.
