@@ -6,6 +6,8 @@ NC=\033[0m # No Color
 
 .PHONY: init
 init: # Construire les images Docker
+	mkdir -p src/images-source
+	mkdir -p src/images-optim
 	docker-compose build
 
 .PHONY: up
