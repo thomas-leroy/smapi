@@ -37,6 +37,12 @@ Accéder à la ligne de commande (cli) du conteneur.
 4. Accède à `http://localhost:1234` pour voir ton serveur en action.
 5. Utilise `make down` pour arrêter le serveur lorsque tu as terminé.
 
+## Où stocker les images ?
+
+L'ensemble des images sources sont stockées dans un sous dossier par tématique dans `./src/images-sources/**/image.jpg`.
+
+Note : pour l'instant le script ne fonctionne qu'avec un seul niveau de sous dossier.
+
 
 ## Routes disponibles
 
