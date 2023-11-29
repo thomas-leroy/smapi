@@ -32,5 +32,8 @@ EXPOSE 1234
 # Copier le script entrypoint.sh
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
+# Copier la doc swagger dans l'image
+COPY swagger.yaml /var/www/swagger.yaml
+
 # Utiliser entrypoint.sh comme entrypoint
 ENTRYPOINT ["entrypoint.sh"]

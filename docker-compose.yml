@@ -13,4 +13,3 @@ services:
     build: .
     volumes:
       - ./src:/var/www
-      - ./swagger.yaml:/var/www/swagger.yaml
