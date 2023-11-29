@@ -29,6 +29,10 @@ Cette commande arrête et supprime le conteneur Docker en cours d'exécution.
 
 Accéder à la ligne de commande (cli) du conteneur.
 
+### bundle
+
+Prépare un dossier `bundle` dont le contenu est à déposer dans le répertoire de l'API en ligne (ex: via votre FTP ou autre solution).
+
 ## Utilisation
 
 1. Ouvre un terminal dans le dossier où se trouvent ces fichiers.
@@ -42,7 +46,6 @@ Accéder à la ligne de commande (cli) du conteneur.
 L'ensemble des images sources sont stockées dans un sous dossier par tématique dans `./src/images-sources/**/image.jpg`.
 
 Note : pour l'instant le script ne fonctionne qu'avec un seul niveau de sous dossier.
-
 
 ## Routes disponibles
 

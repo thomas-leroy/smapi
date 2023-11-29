@@ -17,3 +17,10 @@ down: # Arrêter les conteneurs
 .PHONY: clean
 clean: # Supprimer les conteneurs, volumes, et images
 	docker-compose down --rmi all --volumes
+
+.PHONY: bundle
+bundle: # Crée le bundle à déposer dans le FTP
+	rm -rf ./bundle
+	echo 'Préparation du bundle...'
+	rsync -av --progress ./src/ ./bundle/ --exclude 'images-optim' --exclude 'images-source'
+	echo 'Bundle terminé !'
