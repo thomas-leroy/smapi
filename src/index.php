@@ -90,6 +90,7 @@ function getFoldersList($config, $maxDepth) {
     echo json_encode($tree);
 }
 
+// Méthode permettant la récupération des images contenus dans un dossier
 function getImagesFromFolderList($config, $folderName) {
     if (!$folderName) {
         return;
