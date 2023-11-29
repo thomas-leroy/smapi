@@ -36,7 +36,7 @@ Prépare un dossier `bundle` dont le contenu est à déposer dans le répertoire
 ## Utilisation
 
 1. Ouvre un terminal dans le dossier où se trouvent ces fichiers.
-2. Lance `make build` pour construire l'image Docker (à la toute première utilisation).
+2. Lance `make init` pour construire l'image Docker (à la toute première utilisation).
 3. Exécute `make up` pour démarrer le conteneur.
 4. Accède à `http://localhost:1234` pour voir ton serveur en action.
 5. Utilise `make down` pour arrêter le serveur lorsque tu as terminé.
