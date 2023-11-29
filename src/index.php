@@ -14,8 +14,8 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) u
     });
 
     $r->addRoute('GET', '/swagger', function() {
-        header('Content-Type: application/yaml');
-        readfile('chemin/vers/swagger.yaml');
+        // header('Content-Type: application/yaml');
+        readfile('./swagger.yaml');
         exit();
     });
 });
@@ -112,7 +112,7 @@ function getImagesFromFolderList($config, $folderName) {
                     $filePath = $baseDir . DIRECTORY_SEPARATOR . $file;
 
                     // Vérifie si c'est un fichier et si l'extension correspond à une image
-                    if (is_file($filePath) && preg_match('/\.(jpg|jpeg|png|gif)$/i', $file)) {
+                    if (is_file($filePath) && preg_match('/\.(jpg|jpeg|png|gif|svg|webp)$/i', $file)) {
                         $images[] = $filePath;
                     }
                 }
