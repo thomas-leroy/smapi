@@ -25,7 +25,7 @@ Cette commande construit une image Docker à partir du `Dockerfile`.
 Cette commande exécute le conteneur Docker à partir de l'image que tu as créée.
 
 
-### stop
+### down
 
 Cette commande arrête et supprime le conteneur Docker en cours d'exécution.
 
@@ -41,3 +41,4 @@ Cette commande arrête et supprime le conteneur Docker en cours d'exécution.
 
 ## Routes disponibles
 
+Les routes sont décrites dans la documentation openAPI `swagger.yaml`.

@@ -10,8 +10,8 @@ up: # Démarrer les conteneurs
 shell: # Accéder à la console du conteneur PHP-FPM
 	docker-compose exec php /bin/bash
 
-.PHONY: stop
-stop: # Arrêter les conteneurs
+.PHONY: down
+down: # Arrêter les conteneurs
 	docker-compose down
 
 .PHONY: clean
