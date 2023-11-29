@@ -15,6 +15,7 @@ paths:
       parameters:
         - in: path
           name: folderName
+          required: true
           schema:
             type: string
             minimum: 1
