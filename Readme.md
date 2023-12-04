@@ -1,7 +1,7 @@
 # Smapi
 
 <p align="center">
-  <img src="https://github.com/thomas-leroy/smapi/blob/main/logo.png?raw=true" width="500">
+  <img src="https://github.com/thomas-leroy/smapi/blob/main/logo.png?raw=true" width="200">
 </p>
 
 
