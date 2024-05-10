@@ -1,6 +1,6 @@
 <?php
-// Inclure la bibliothèque pour optimiser les images
-// Installez-le via Composer : composer require spatie/image-optimizer
+// Include the library to optimize images
+// Install it via Composer: composer require spatie/image-optimizer
 require 'vendor/autoload.php';
 use Spatie\ImageOptimizer\OptimizerChainFactory;
 
@@ -14,10 +14,10 @@ function syncFolders($src, $dest) {
     }
 
     if (!is_writable($dest)) {
-        die("Le dossier $dest n'est pas accessible en écriture.");
+        die("The folder $dest is not writable.");
     }
 
-    // Supprimer les fichiers de $dest qui n'existent pas dans $src
+    // Remove files from $dest that do not exist in $src
     $destFiles = array_diff(scandir($dest), ['.', '..']);
     foreach ($destFiles as $file) {
         $destPath = $dest . '/' . $file;
@@ -48,7 +48,7 @@ function syncFolders($src, $dest) {
         }
 
         if (file_exists($destPath)) {
-            continue;  // Skip si le fichier existe déjà dans $dest
+            continue;  // Skip if the file already exists in $dest
         }
 
         copy($srcPath, $destPath);
@@ -91,7 +91,7 @@ function resizeImage($path, $maxWidth = 2048) {
 }
 
 
-// Vérifier et créer le répertoire "image-optim" s'il n'existe pas
+// Check and create the "image-optim" directory if it does not exist
 $srcFolder = 'images-source';
 $destFolder = 'images-optim';
 
@@ -99,10 +99,9 @@ if (!is_dir($destFolder)) {
     mkdir($destFolder, 0777, true);
 }
 
-// Vérifier les droits d'écriture sur "image-optim"
+// Check write permissions on "image-optim"
 if (!is_writable($destFolder)) {
-    die("Le dossier $destFolder n'est pas accessible en écriture.");
+    die("The folder $destFolder is not writable.");
 }
 
 syncFolders($srcFolder, $destFolder);
-?>

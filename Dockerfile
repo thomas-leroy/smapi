@@ -1,10 +1,10 @@
-# Utiliser l'image PHP 8 comme base
+# Use the PHP 8 image as the base
 FROM php:8-fpm
 
-# Répertoire par défaut
+# Default directory
 WORKDIR /var/www
 
-# Mettre à jour le système et installer les dépendances requises
+# Update the system and install the required dependencies
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
@@ -12,28 +12,28 @@ RUN apt-get update && apt-get install -y \
     git \
     unzip
 
-# Installer les extensions PHP nécessaires
+# Install the necessary PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install gd
 
-# Installer Composer
+# Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Installer les librairies pour l'optimisation d'image
+# Install libraries for image optimization
 RUN apt-get install -y \
     jpegoptim \
     optipng \
     pngquant \
     gifsicle
 
-# Exposer le port 1234 pour PHP-FPM
+# Expose port 1234 for PHP-FPM
 EXPOSE 1234
 
-# Copier le script entrypoint.sh
+# Copy the entrypoint.sh script
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-# Copier la doc swagger dans l'image
+# Copy the swagger documentation into the image
 COPY swagger.yaml /var/www/swagger.yaml
 
-# Utiliser entrypoint.sh comme entrypoint
+# Use entrypoint.sh as the entrypoint
 ENTRYPOINT ["entrypoint.sh"]

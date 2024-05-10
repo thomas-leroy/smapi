@@ -2,8 +2,7 @@
 require 'vendor/autoload.php';
 $config = require 'config.php';
 
-
-// Utilisation du routeur (si nécessaire)
+// Using the router (if necessary)
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) use ($config) {
     $r->addRoute('GET', '/folders', function() use ($config) {
         return getFoldersList($config, 3);
@@ -20,11 +19,11 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) u
     });
 });
 
-// Récupérer la méthode HTTP et l'URI de la requête
+// Retrieve the HTTP method and URI of the request
 $httpMethod = $_SERVER['REQUEST_METHOD'];
 $uri = $_SERVER['REQUEST_URI'];
 
-// Gestion des routes
+// Route handling
 $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::NOT_FOUND:
@@ -36,12 +35,12 @@ switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::FOUND:
         $handler = $routeInfo[1];
         $vars = $routeInfo[2];
-        // appeler la fonction de gestion
+        // call the handler function
         call_user_func($handler, $vars);
         break;
 }
 
-// Méthode permettant de récupérer l'arbre des dossiers
+// Method to retrieve the folder tree
 function getFoldersList($config, $maxDepth) {
     $baseDir = $config['path']['optim'];
 
@@ -50,35 +49,35 @@ function getFoldersList($config, $maxDepth) {
     }
 
     $tree = [];
-    $queue = [[$baseDir, 0]]; // Queue avec des paires [chemin, profondeur]
+    $queue = [[$baseDir, 0]]; // Queue with pairs [path, depth]
 
     while (!empty($queue)) {
         list($currentDir, $currentDepth) = array_shift($queue);
 
-        // Vérifier la profondeur
+        // Check the depth
         if ($currentDepth >= $maxDepth) {
             continue;
         }
 
-        // Ouvrir le répertoire
+        // Open the directory
         $dirHandle = opendir($currentDir);
         if (!$dirHandle) {
             continue;
         }
 
         while (($item = readdir($dirHandle)) !== false) {
-            // Ignorer les éléments '.' et '..'
+            // Ignore the '.' and '..' items
             if ($item == '.' || $item == '..') {
                 continue;
             }
 
             $path = $currentDir . DIRECTORY_SEPARATOR . $item;
             if (is_dir($path)) {
-                // Ajouter le dossier à l'arbre
+                // Add the folder to the tree
                 $relativePath = substr($path, strlen($baseDir) + 1);
                 $tree[] = $relativePath;
 
-                // Ajouter les sous-dossiers à la queue
+                // Add subfolders to the queue
                 array_push($queue, [$path, $currentDepth + 1]);
             }
         }
@@ -90,7 +89,7 @@ function getFoldersList($config, $maxDepth) {
     echo json_encode($tree);
 }
 
-// Méthode permettant la récupération des images contenus dans un dossier
+// Method for retrieving images contained in a folder
 function getImagesFromFolderList($config, $folderName) {
     if (!$folderName) {
         return;
@@ -100,19 +99,19 @@ function getImagesFromFolderList($config, $folderName) {
 
     $images = [];
 
-    // Vérifie si le dossier existe et peut être lu
+    // Check if the folder exists and can be read
     if (file_exists($baseDir) && is_dir($baseDir) && is_readable($baseDir)) {
-        // Ouvre le dossier
+        // Open the folder
         $dirHandle = opendir($baseDir);
 
         if ($dirHandle) {
             while (($file = readdir($dirHandle)) !== false) {
-                // Ignore les dossiers '.' et '..'
+                // Ignore the '.' and '..' folders
                 if ($file != '.' && $file != '..') {
-                    // Construit le chemin complet du fichier
+                    // Build the complete file path
                     $filePath = $baseDir . DIRECTORY_SEPARATOR . $file;
 
-                    // Vérifie si c'est un fichier et si l'extension correspond à une image
+                    // Check if it's a file and if the extension matches an image
                     if (is_file($filePath) && preg_match('/\.(jpg|jpeg|png|gif|svg|webp)$/i', $file)) {
                         $images[] = $filePath;
                     }
