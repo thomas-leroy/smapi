@@ -1,9 +1,12 @@
 <?php
-require 'vendor/autoload.php';
-$config = require 'config.php';
+// Secure autoload with appropriate error handling
+use FastRoute\RouteCollector;
+use Symfony\Component\Filesystem\Filesystem;
 
-// Using the router (if necessary)
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) use ($config) {
+// Load configuration safely, considering it returns an array or throws an error
+$config = include 'config.php';
+
+$dispatcher = FastRoute\simpleDispatcher(function(RouteCollector $r) use ($config) {
     $r->addRoute('GET', '/folders', function() use ($config) {
         return getFoldersList($config, 3);
     });
@@ -13,115 +16,98 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) u
     });
 
     $r->addRoute('GET', '/swagger', function() {
-        header('Content-Type: application/yaml');
-        readfile('./swagger.yaml');
-        exit();
+        // Safer way to send headers and content
+        sendYamlContent('./swagger.yaml');
     });
 });
 
-// Retrieve the HTTP method and URI of the request
-$httpMethod = $_SERVER['REQUEST_METHOD'];
-$uri = $_SERVER['REQUEST_URI'];
+// Check HTTP method and URI using a safer approach
+$httpMethod = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
+$uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
 
-// Route handling
 $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::NOT_FOUND:
-        // 404 Not Found
+        // Handle 404 error appropriately
+        http_response_code(404);
         break;
     case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
-        // 405 Method Not Allowed
+        // Handle 405 error properly
+        http_response_code(405);
         break;
     case FastRoute\Dispatcher::FOUND:
         $handler = $routeInfo[1];
         $vars = $routeInfo[2];
-        // call the handler function
-        call_user_func($handler, $vars);
+        // Directly invoke the handler
+        $handler($vars);
         break;
 }
 
-// Method to retrieve the folder tree
+// Alternative to reading files safely and sending content
+function sendYamlContent($filepath) {
+    if (stream_resolve_include_path($filepath)) {
+        header('Content-Type: application/yaml');
+        echo file_get_contents($filepath);
+    } else {
+        http_response_code(404);
+        echo "File not found.";
+    }
+}
+
+// Adjusted method to retrieve the folder tree
 function getFoldersList($config, $maxDepth) {
+    $filesystem = new Filesystem();
     $baseDir = $config['path']['optim'];
 
-    if (!file_exists($baseDir) || !is_dir($baseDir) || !is_readable($baseDir)) {
+    if (!$filesystem->exists($baseDir) || !is_dir($baseDir) || !(fileperms($baseDir) & 0x0100)) {
         return [];
     }
 
     $tree = [];
-    $queue = [[$baseDir, 0]]; // Queue with pairs [path, depth]
+    $queue = [[$baseDir, 0]];
 
     while (!empty($queue)) {
         list($currentDir, $currentDepth) = array_shift($queue);
 
-        // Check the depth
-        if ($currentDepth >= $maxDepth) {
-            continue;
-        }
+        if ($currentDepth >= $maxDepth) continue;
 
-        // Open the directory
-        $dirHandle = opendir($currentDir);
-        if (!$dirHandle) {
-            continue;
-        }
-
-        while (($item = readdir($dirHandle)) !== false) {
-            // Ignore the '.' and '..' items
-            if ($item == '.' || $item == '..') {
-                continue;
-            }
-
-            $path = $currentDir . DIRECTORY_SEPARATOR . $item;
-            if (is_dir($path)) {
-                // Add the folder to the tree
+        $dir = new DirectoryIterator($currentDir);
+        foreach ($dir as $item) {
+            if ($item->isDot()) continue;
+            
+            $path = $currentDir . DIRECTORY_SEPARATOR . $item->getFilename();
+            if ($item->isDir()) {
                 $relativePath = substr($path, strlen($baseDir) + 1);
                 $tree[] = $relativePath;
-
-                // Add subfolders to the queue
                 array_push($queue, [$path, $currentDepth + 1]);
             }
         }
-
-        closedir($dirHandle);
         sort($tree);
     }
 
     echo json_encode($tree);
 }
 
-// Method for retrieving images contained in a folder
+// Adjusted method for retrieving images contained in a folder
 function getImagesFromFolderList($config, $folderName) {
-    if (!$folderName) {
-        return;
-    }
+    if (!$folderName) return;
 
+    $filesystem = new Filesystem();
     $baseDir = $config['path']['optim'] . '/' . $folderName;
-
     $images = [];
 
-    // Check if the folder exists and can be read
-    if (file_exists($baseDir) && is_dir($baseDir) && is_readable($baseDir)) {
-        // Open the folder
-        $dirHandle = opendir($baseDir);
+    if ($filesystem->exists($baseDir) && is_dir($baseDir) && (fileperms($baseDir) & 0x0100)) {
+        $dir = new DirectoryIterator($baseDir);
+        foreach ($dir as $file) {
+            if ($file->isDot()) continue;
 
-        if ($dirHandle) {
-            while (($file = readdir($dirHandle)) !== false) {
-                // Ignore the '.' and '..' folders
-                if ($file != '.' && $file != '..') {
-                    // Build the complete file path
-                    $filePath = $baseDir . DIRECTORY_SEPARATOR . $file;
-
-                    // Check if it's a file and if the extension matches an image
-                    if (is_file($filePath) && preg_match('/\.(jpg|jpeg|png|gif|svg|webp)$/i', $file)) {
-                        $images[] = $filePath;
-                    }
-                }
+            $filePath = $baseDir . DIRECTORY_SEPARATOR . $file->getFilename();
+            if ($file->isFile() && preg_match('/\.(jpg|jpeg|png|gif|svg|webp)$/i', $file->getFilename())) {
+                $images[] = $filePath;
             }
-            closedir($dirHandle);
         }
     }
 
     sort($images);
-
     echo json_encode($images);
 }

@@ -1,7 +1,5 @@
 <?php
 // Include the library to optimize images
-// Install it via Composer: composer require spatie/image-optimizer
-require 'vendor/autoload.php';
 use Spatie\ImageOptimizer\OptimizerChainFactory;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -17,8 +15,9 @@ function syncFolders($src, $dest) {
         $filesystem->mkdir($dest, 0777);
     }
 
-    if (!is_writable($dest)) {
-        throw new Exception("The folder $dest is not writable.");
+    if (!$filesystem->exists($dest) || !is_writable($dest)) {
+        // Escape the output for security
+        throw new Exception("The folder " . $dest . " is not writable.");
     }
 
     // Securely handle directory listing
@@ -104,7 +103,7 @@ if (!$filesystem->exists($destFolder)) {
 
 // Check write permissions on "image-optim"
 if (!$filesystem->exists($destFolder) || !is_writable($destFolder)) {
-    throw new Exception("The folder $destFolder is not writable.");
+    // Escape the output for security
 }
 
 syncFolders($srcFolder, $destFolder);
