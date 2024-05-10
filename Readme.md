@@ -1,73 +1,96 @@
 # Smapi
 
 <p align="center">
-  <img src="https://github.com/thomas-leroy/smapi/blob/main/logo.png?raw=true" width="200">
+   <img src="https://github.com/thomas-leroy/smapi/blob/main/logo.png?raw=true" width="200">
 </p>
 
+The objective of this project is to produce the simplest possible API to optimize and distribute images from a PHP environment.
 
-L'objectif de ce projet est de produire une API la plus simple possible pour optimiser et diffuser des images.
+This project gives you everything you need to run a local PHP 8 environment with Nginx using Docker. It includes a `Dockerfile`, an Nginx configuration file (`nginx.conf`) and a `Makefile` to simplify Docker commands.
 
-Ce projet te donne tout ce dont tu as besoin pour faire tourner un environnement local PHP 8 avec Nginx grâce à Docker. Il inclut un `Dockerfile`, un fichier de configuration Nginx (`nginx.conf`) et un `Makefile` pour simplifier les commandes Docker.
+Simple commands allow you to quickly launch the project locally or prepare the version ready to upload.
 
-Des commandes simples permettent de lancer rapidement le projet en local ou préparer la version prête à uploader.
+## Prerequisites
 
-## Prérequis
+- Have Docker installed on your machine (<https://docs.docker.com/engine/install/>)
+- Clone this repo `git clone git@github.com:thomas-leroy/smapi.git`
 
-- Avoir Docker installé sur ta machine (https://docs.docker.com/engine/install/)
-- Cloner ce repo `git clone git@github.com:thomas-leroy/smapi.git`
+## Use
 
-## Utilisation
+1. Open a terminal in the folder where these files are located.
+2. Run `make init` to build the Docker image (on first use).
+3. Run `make up` to start the container.
+4. Go to `http://localhost:1234` to see your server in action.
+5. Use `make down` to shut down the server when you're done.
 
-1. Ouvre un terminal dans le dossier où se trouvent ces fichiers.
-2. Lance `make init` pour construire l'image Docker (à la première utilisation).
-3. Exécute `make up` pour démarrer le conteneur.
-4. Accède à `http://localhost:1234` pour voir ton serveur en action.
-5. Utilise `make down` pour arrêter le serveur lorsque tu as terminé.
+## Where to store images?
 
-## Où stocker les images ?
+All source images are stored in a subfolder by theme in `./src/images-sources/**/image.jpg`.
 
-L'ensemble des images sources sont stockées dans un sous dossier par tématique dans `./src/images-sources/**/image.jpg`.
+It is possible to create subfolder to store images in source images.
 
-Il est possible de créer des sous-dossiers pour ranger les images dans images-sources. 
+Subfolders are used in API calls.
 
-Les sous-dossiers sont utilisés dans les appels API.
+Note: for the moment the script only works with one level of subfolder.
 
-Note : pour l'instant le script ne fonctionne qu'avec un seul niveau de sous dossier.
+## Makefile commands
 
-## Commandes Makefile
+Commands are accessible to perform common project actions.
 
-Les commandes sont accessibles pour effectuer des actions communes du projet.
+For example: `make up` to start the project.
 
-Par exemple : `make up` pour lancer le projet.
+### `make init`
 
-### init
+This command builds a Docker image from the `Dockerfile`.
 
-Cette commande construit une image Docker à partir du `Dockerfile`.
+### `make up`
 
-### up
+This command runs the Docker container from the image you created.
 
-Cette commande exécute le conteneur Docker à partir de l'image que tu as créée.
+### `make down`
 
-### down
+This command stops and deletes the currently running Docker container.
 
-Cette commande arrête et supprime le conteneur Docker en cours d'exécution.
+### `make shell`
 
-### shell
+Access the container's command line (CLI).
 
-Accéder à la ligne de commande (CLI) du conteneur.
+### `make bundle`
 
-### bundle
+Prepare a `bundle` folder whose contents are to be placed in the online API directory (e.g. via your FTP or other solution).
 
-Prépare un dossier `bundle` dont le contenu est à déposer dans le répertoire de l'API en ligne (ex: via votre FTP ou autre solution).
+## Available routes
 
-## Routes disponibles
+### 1. Get Media Folders List
 
-Les routes sont décrites dans la documentation openAPI `swagger.yaml`.
+- **Endpoint:** `/folders`
+- **Method:** `GET`
+- **Summary:** Retrieves a list of media folders.
+- **Responses:**
+  - **200:** Success - Returns the list of media folders.
 
-## CRONJOB : optimiser et compresser les images
+### 2. Get Images from Specific Folder
 
-Pour synchronier et optimiser les images pour le web, configurer une cronjob (période à définir) sur la route :`http://localhost/cron-sync-and-optim.php`.
+- **Endpoint:** `/images/{folderName}`
+- **Method:** `GET`
+- **Summary:** Fetches images from the specified folder.
+- **Parameters:**
+  - **folderName (path parameter):** The name of the folder from which to retrieve images. Must be a string of at least 1 character.
+- **Responses:**
+  - **200:** Success - Returns the images from the specified folder.
 
-Le script peut être long à lancer pour la première fois et va timeout régulièrement. A chaque lancement il avancera dans son traitement, jusqu'a avoir tout synchronisé.
+### 3. Get Swagger File Content (Development Only)
 
-Les images sont à stocker dans le dossier ./src/images-sources, et seront copiées optimisées dans le répertoire ./src/images-optim.
+- **Endpoint:** `/swagger`
+- **Method:** `GET`
+- **Summary:** Provides the content of the Swagger file. This endpoint is intended for development purposes only.
+- **Responses:**
+  - **200:** Success - Returns the Swagger file content.
+
+## CRONJOB: optimize and compress images
+
+To synchronize and optimize images for the web, configure a cronjob (period to be defined) on the route:`http://localhost/cron-sync-and-optim.php`.
+
+The script can take a long time to run for the first time and will timeout regularly. At each launch it will advance in its processing, until it has everything synchronized.
+
+The images are to be stored in the ./src/images-sources folder, and will be copied optimized into the ./src/images-optim directory.
