@@ -5,41 +5,41 @@ BLUE=\033[0;34m
 NC=\033[0m # No Color
 
 .PHONY: init
-init: # Construire les images Docker
+init: # Build Docker images
 	mkdir -p src/images-source
 	mkdir -p src/images-optim
 	docker-compose build
 
 .PHONY: up
-up: # Démarrer les conteneurs
+up: # Start the containers
 	docker-compose up -d
 
 .PHONY: shell
-shell: # Accéder à la console du conteneur PHP-FPM
+shell: # Access the PHP-FPM container console
 	docker-compose exec php /bin/bash
 
 .PHONY: down
-down: # Arrêter les conteneurs
+down: # Stop the containers
 	docker-compose down
 
 .PHONY: clean-container
-clean-container: # Supprimer les conteneurs, volumes, et images
+clean-container: # Remove containers, volumes, and images
 	docker-compose down --rmi all --volumes
 
 .PHONY: bundle
-bundle: # Crée le bundle à déposer dans le FTP
+bundle: # Create the bundle to be placed on the FTP
 	rm -rf ./bundle
-	@echo "$(BLUE)Création du bundle...$(NC)"
+	@echo "$(BLUE)Creating the bundle...$(NC)"
 	rsync -av ./src/ ./bundle/ \
 		--exclude 'images-optim' \
 		--exclude 'images-source' \
 		--exclude 'composer.*'
 	mkdir ./bundle/images-optim
 	mkdir ./bundle/images-source
-	@echo "$(GREEN) => Bundle terminé !$(NC)"
+	@echo "$(GREEN) => Bundle completed!$(NC)"
 
 .PHONY: clean-bundle
-clean-bundle: # Supprime le bundle
+clean-bundle: # Delete the bundle
 	rm -rf ./bundle
 
 .PHONY: clean
