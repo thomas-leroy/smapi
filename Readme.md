@@ -1,7 +1,7 @@
 # Smapi
 
 <p align="center">
-   <img src="https://github.com/thomas-leroy/smapi/blob/main/logo.png?raw=true" width="200">
+   <img src="https://github.com/thomas-leroy/smapi/blob/main/assets/logo.png?raw=true" width="200">
 </p>
 
 The objective of this project is to produce the simplest possible API to optimize and distribute images from a PHP environment.
