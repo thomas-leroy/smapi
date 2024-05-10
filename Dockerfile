@@ -5,7 +5,7 @@ FROM php:8-fpm
 WORKDIR /var/www
 
 # Update the system and install the required dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \

@@ -3,55 +3,58 @@
 // Install it via Composer: composer require spatie/image-optimizer
 require 'vendor/autoload.php';
 use Spatie\ImageOptimizer\OptimizerChainFactory;
+use Symfony\Component\Filesystem\Filesystem;
 
 $optimizerChain = OptimizerChainFactory::create();
 
 function syncFolders($src, $dest) {
     global $optimizerChain;
 
-    if (!is_dir($dest)) {
-        mkdir($dest, 0777, true);
+    // Use Symfony Filesystem or similar library to check and create directories securely
+    $filesystem = new Symfony\Component\Filesystem\Filesystem();
+
+    if (!$filesystem->exists($dest)) {
+        $filesystem->mkdir($dest, 0777);
     }
 
     if (!is_writable($dest)) {
-        die("The folder $dest is not writable.");
+        throw new Exception("The folder $dest is not writable.");
     }
 
-    // Remove files from $dest that do not exist in $src
-    $destFiles = array_diff(scandir($dest), ['.', '..']);
-    foreach ($destFiles as $file) {
-        $destPath = $dest . '/' . $file;
-        $srcPath = $src . '/' . $file;
-        if (!file_exists($srcPath)) {
-            unlink($destPath);
+    // Securely handle directory listing
+    $destFiles = new DirectoryIterator($dest);
+    foreach ($destFiles as $fileInfo) {
+        if ($fileInfo->isDot()) continue;
+        $destPath = $dest . '/' . $fileInfo->getFilename();
+        $srcPath = $src . '/' . $fileInfo->getFilename();
+        if (!$filesystem->exists($srcPath)) {
+            $filesystem->remove($destPath);
         }
     }
 
-    $dir = opendir($src);
+    $dir = new DirectoryIterator($src);
     $filesProcessed = 0;
-    while (($file = readdir($dir)) !== false) {
-        if ($file == '.' || $file == '..') {
-            continue;
-        }
+    foreach ($dir as $fileInfo) {
+        if ($fileInfo->isDot()) continue;
 
-        $srcPath = $src . '/' . $file;
-        $destPath = $dest . '/' . $file;
+        $srcPath = $src . '/' . $fileInfo->getFilename();
+        $destPath = $dest . '/' . $fileInfo->getFilename();
 
-        if (is_dir($srcPath)) {
+        if ($fileInfo->isDir()) {
             syncFolders($srcPath, $destPath);
             continue;
         }
 
-        $ext = pathinfo($file, PATHINFO_EXTENSION);
+        $ext = strtolower($fileInfo->getExtension());
         if (!in_array($ext, ['jpg', 'png', 'webp', 'webm', 'gif'])) {
             continue;
         }
 
-        if (file_exists($destPath)) {
+        if ($filesystem->exists($destPath)) {
             continue;  // Skip if the file already exists in $dest
         }
 
-        copy($srcPath, $destPath);
+        $filesystem->copy($srcPath, $destPath);
 
         if ($ext === 'jpg' || $ext === 'png') {
             resizeImage($destPath, 2048);
@@ -59,12 +62,10 @@ function syncFolders($src, $dest) {
 
         $optimizerChain->optimize($destPath, $destPath);
     }
-
-    closedir($dir);
 }
 
 function resizeImage($path, $maxWidth = 2048) {
-    $ext = pathinfo($path, PATHINFO_EXTENSION);
+    $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
     if ($ext !== 'jpg' && $ext !== 'png') {
         return;
     }
@@ -75,7 +76,7 @@ function resizeImage($path, $maxWidth = 2048) {
     }
 
     $newWidth = $maxWidth;
-    $newHeight = intval($height * ($newWidth / $width));
+    $newHeight = (int) ($height * ($newWidth / $width));
 
     $src = ($ext === 'jpg') ? imagecreatefromjpeg($path) : imagecreatefrompng($path);
     $dst = imagecreatetruecolor($newWidth, $newHeight);
@@ -85,23 +86,25 @@ function resizeImage($path, $maxWidth = 2048) {
         imagesavealpha($dst, true);
     }
 
-    imagecopyresampled($dst, $src, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+    // Consider using imagecopyresized if imagecopyresampled is discouraged
+    imagecopyresized($dst, $src, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
     $saveImage = ($ext === 'jpg') ? 'imagejpeg' : 'imagepng';
     $saveImage($dst, $path);
 }
 
-
 // Check and create the "image-optim" directory if it does not exist
 $srcFolder = 'images-source';
 $destFolder = 'images-optim';
+$filesystem = new Filesystem();
+$filesystem = new Symfony\Component\Filesystem\Filesystem();
 
-if (!is_dir($destFolder)) {
-    mkdir($destFolder, 0777, true);
+if (!$filesystem->exists($destFolder)) {
+    $filesystem->mkdir($destFolder, 0777);
 }
 
 // Check write permissions on "image-optim"
-if (!is_writable($destFolder)) {
-    die("The folder $destFolder is not writable.");
+if (!$filesystem->exists($destFolder) || !is_writable($destFolder)) {
+    throw new Exception("The folder $destFolder is not writable.");
 }
 
 syncFolders($srcFolder, $destFolder);
