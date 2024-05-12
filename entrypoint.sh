@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo "===========>"
+
 # Changer les permissions
 chown -R www-data:www-data /var/www/images-optim
 rm -rf /var/www/html

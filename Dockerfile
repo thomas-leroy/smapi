@@ -5,7 +5,7 @@ FROM php:8-fpm
 WORKDIR /var/www
 
 # Update the system and install the required dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt update && apt install -y --no-install-recommends \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
@@ -20,7 +20,7 @@ RUN docker-php-ext-install gd
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install libraries for image optimization
-RUN apt-get install -y --no-install-recommends \
+RUN apt install -y --no-install-recommends \
     jpegoptim \
     optipng \
     pngquant \

@@ -89,7 +89,7 @@ Prepare a `bundle` folder whose contents are to be placed in the online API dire
 
 ## CRONJOB: optimize and compress images
 
-To synchronize and optimize images for the web, configure a cronjob (period to be defined) on the route:`http://localhost/cron-sync-and-optim.php`.
+To synchronize and optimize images for the web, configure a cronjob (period to be defined) on the route:`http://localhost:1234/cron-sync-and-optim.php`.
 
 The script can take a long time to run for the first time and will timeout regularly. At each launch it will advance in its processing, until it has everything synchronized.
 

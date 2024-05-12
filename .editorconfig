@@ -1,0 +1,53 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# Top-most EditorConfig file
+root = true
+
+# Set the default charset
+[*]
+charset = utf-8
+
+# Indentation settings
+[*.php]
+indent_style = space
+indent_size = 4
+
+# Line endings
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+# Trim trailing whitespace
+[*.{php,html,css,js}]
+trim_trailing_whitespace = true
+
+# PHP specific settings
+[*.php]
+# Maximum line length
+max_line_length = 120
+
+# PHPDoc conventions
+[*.php]
+# Require PHPDoc for classes, methods, and functions
+phpdoc_separate_class = true
+phpdoc_separate_property = true
+phpdoc_separate_method = true
+phpdoc_summary = true
+phpdoc_trim = true
+phpdoc_order = true
+phpdoc_no_empty_return = true
+phpdoc_no_package = true
+phpdoc_no_useless_inheritdoc = true
+phpdoc_scalar_type_hint = true
+phpdoc_summary = true
+phpdoc_to_comment = true
+phpdoc_trim = true
+phpdoc_types = true
+phpdoc_var_without_name = true
+
+# Codacy specific settings
+[*.php]
+# Disable Codacy's rule for unused variables
+exclude_patterns = */vendor/*, */tests/*, */test/*, */Tests/*, */Test/*, */testsuite/*, */TestSuite/*, */Fixture/*, */Fixtures/*
+exclude_files = */vendor/*, */tests/*, */test/*, */Tests/*, */Test/*, */testsuite/*, */TestSuite/*, */Fixture/*, */Fixtures/*
+exclude_rules = UnusedVariable
