@@ -2,3 +2,21 @@ vendor
 images-source
 images-optim
 bundle
+.DS_Store
+.AppleDouble
+.LSOverride
+# Symfony
+/var/
+/vendor/
+/bin/
+/node_modules/
+/public/bundles/
+/public/build/
+/public/uploads/
+/public/media/
+/var/cache/
+/var/logs/
+/var/sessions/
+/.env.local
+/.env.local.php
+/.phpunit.result.cache
