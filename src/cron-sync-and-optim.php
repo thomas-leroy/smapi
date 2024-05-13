@@ -16,24 +16,23 @@ function syncFolders($src, $dest)
 
     if ($filesystem->exists($dest) === false) {
         $filesystem->mkdir($dest, 0777);
-    }
-    ;
+    };
 
     if ($filesystem->exists($dest) === false || is_writable($dest) === false) {
         // Escape the output for security.
         throw new Exception("The folder $dest is not writable.");
-    }
-    ;
+    };
 
     // Securely handle directory listing.
     $destFiles = new DirectoryIterator($dest);
     foreach ($destFiles as $fileInfo) {
         if ($fileInfo->isDot() === true) {
             continue;
-        }
-        ;
-        $destPath = $dest . '/' . $fileInfo->getFilename();
-        $srcPath = $src . '/' . $fileInfo->getFilename();
+        };
+
+        $destPath = $dest.'/'.$fileInfo->getFilename();
+        $srcPath = $src.'/'.$fileInfo->getFilename();
+
         if ($filesystem->exists($srcPath) === false) {
             $filesystem->remove($destPath);
         }
@@ -45,8 +44,8 @@ function syncFolders($src, $dest)
             continue;
         };
 
-        $srcPath = $src . '/' . $fileInfo->getFilename();
-        $destPath = $dest . '/' . $fileInfo->getFilename();
+        $srcPath = $src.'/'.$fileInfo->getFilename();
+        $destPath = $dest.'/'.$fileInfo->getFilename();
 
         if ($fileInfo->isDir() === true) {
             syncFolders($srcPath, $destPath);
@@ -54,7 +53,7 @@ function syncFolders($src, $dest)
         };
 
         $ext = strtolower($fileInfo->getExtension());
-        if (in_array($ext, ['jpg', 'png', 'webp', 'webm', 'gif']) === false) {
+        if (in_array($ext, ['jpg', 'png', 'webp', 'webm', 'gif', 'avif']) === false) {
             continue;
         };
 
